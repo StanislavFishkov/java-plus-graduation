@@ -1,0 +1,36 @@
+server:
+  port: 8080
+
+management:
+  health.circuitbreakers.enabled: true
+  endpoint.health.show-details: always
+
+resilience4j.circuitbreaker:
+  instances:
+    myCircuitBreaker:
+      registerHealthIndicator: true
+      slidingWindowType: COUNT_BASED
+      slidingWindowSize: 5
+      failureRateThreshold: 50
+      minimumNumberOfCalls: 1
+      waitDurationInOpenState: 10000 # 10 секунд в миллисекундах
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+      permittedNumberOfCallsInHalfOpenState: 3
+
+spring:
+  output:
+    ansi:
+      enabled: ALWAYS
+  cloud:
+    gateway:
+      discovery.locator.enabled: true
+      routes:
+        - id: main_service_route
+          uri: lb://main-service
+          predicates:
+            - Path=/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: myCircuitBreaker
+                fallbackUri: forward:/main_service-failure
