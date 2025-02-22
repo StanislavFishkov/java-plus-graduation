@@ -1,0 +1,66 @@
+server:
+  port: 8080
+
+management:
+  health.circuitbreakers.enabled: true
+  endpoint.health.show-details: always
+
+resilience4j.circuitbreaker:
+  instances:
+    myCircuitBreaker:
+      registerHealthIndicator: true
+      slidingWindowType: COUNT_BASED
+      slidingWindowSize: 5
+      failureRateThreshold: 50
+      minimumNumberOfCalls: 1
+      waitDurationInOpenState: 10000 # 10 секунд в миллисекундах
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+      permittedNumberOfCallsInHalfOpenState: 3
+
+spring:
+  cloud:
+    gateway:
+      default-filters:
+        - PrefixPath=/api/v1
+      discovery.locator.enabled: true
+      routes:
+        - id: shopping_cart_service_route
+          uri: lb://shopping-cart
+          predicates:
+            - Path=/shopping-cart/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: myCircuitBreaker
+                fallbackUri: forward:/shopping-cart-failure
+        - id: shopping_store_service_route
+          uri: lb://shopping-store
+          predicates:
+            - Path=/shopping-store/**
+          filters:
+            - name: Retry
+              args:
+                retries: 1
+                statuses: NOT_FOUND
+                methods: GET
+                backoff:
+                  firstBackoff: 30ms
+#                  maxBackoff: 50ms
+#                  factor: 2
+#                  basedOnPreviousValue: false
+        - id: warehouse_service_route
+          uri: lb://warehouse
+          predicates:
+            - Path=/warehouse/**
+        - id: order_service_route
+          uri: lb://order
+          predicates:
+            - Path=/order/**
+        - id: payment_service_route
+          uri: lb://payment
+          predicates:
+            - Path=/payment/**
+        - id: delivery_service_route
+          uri: lb://delivery
+          predicates:
+            - Path=/delivery/**
