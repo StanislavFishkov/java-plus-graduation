@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:6666/StatServDB
-    username: dbuser
-    password: 12345
+    url: jdbc:postgresql://stats-db:5432/ewm-stats
+    username: root
+    password: root
   sql:
     init:
       mode: always
