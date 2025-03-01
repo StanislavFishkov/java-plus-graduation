@@ -1,4 +1,4 @@
-package ru.practicum.ewm.core.error;
+package ru.practicum.ewm.common.error;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
-import ru.practicum.ewm.core.error.exception.ConflictDataException;
-import ru.practicum.ewm.core.error.exception.InternalServerException;
-import ru.practicum.ewm.core.error.exception.NotFoundException;
-import ru.practicum.ewm.core.error.exception.ValidationException;
+import ru.practicum.ewm.common.error.exception.ConflictDataException;
+import ru.practicum.ewm.common.error.exception.InternalServerException;
+import ru.practicum.ewm.common.error.exception.NotFoundException;
+import ru.practicum.ewm.common.error.exception.ValidationException;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;

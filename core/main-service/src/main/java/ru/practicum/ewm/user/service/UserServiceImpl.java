@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.ewm.core.error.exception.NotFoundException;
+import ru.practicum.ewm.common.error.exception.NotFoundException;
 import ru.practicum.ewm.user.dto.UserDto;
 import ru.practicum.ewm.user.dto.UserRequestDto;
 import ru.practicum.ewm.user.dto.UserShortDto;

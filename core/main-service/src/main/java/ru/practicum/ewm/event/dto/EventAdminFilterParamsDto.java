@@ -3,8 +3,8 @@ package ru.practicum.ewm.event.dto;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.format.annotation.DateTimeFormat;
-import ru.practicum.ewm.core.util.DateTimeUtil;
-import ru.practicum.ewm.core.validation.DateTimeRange;
+import ru.practicum.ewm.common.util.DateTimeUtil;
+import ru.practicum.ewm.common.validation.DateTimeRange;
 import ru.practicum.ewm.event.model.EventStates;
 
 import java.time.LocalDateTime;

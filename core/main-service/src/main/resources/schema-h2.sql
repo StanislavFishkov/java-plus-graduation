@@ -71,4 +71,4 @@ CREATE TABLE IF NOT EXISTS compilation_events (
 	CONSTRAINT events_fk FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE
 );
 
-CREATE ALIAS DISTANCE FOR "ru.practicum.ewm.core.util.Distance.getDistance";
+CREATE ALIAS DISTANCE FOR "ru.practicum.ewm.common.util.Distance.getDistance";

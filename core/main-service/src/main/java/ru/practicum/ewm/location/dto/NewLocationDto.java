@@ -4,7 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.ewm.core.validation.NullOrNotBlank;
+import ru.practicum.ewm.common.validation.NullOrNotBlank;
 
 @Data
 @AllArgsConstructor

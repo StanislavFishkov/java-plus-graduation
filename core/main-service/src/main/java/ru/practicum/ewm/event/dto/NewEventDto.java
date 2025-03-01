@@ -5,7 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.ewm.core.util.DateTimeUtil;
+import ru.practicum.ewm.common.util.DateTimeUtil;
 import ru.practicum.ewm.location.dto.NewLocationDto;
 
 import java.time.LocalDateTime;

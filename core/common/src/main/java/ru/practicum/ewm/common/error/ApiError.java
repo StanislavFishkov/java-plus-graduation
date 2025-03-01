@@ -1,10 +1,10 @@
-package ru.practicum.ewm.core.error;
+package ru.practicum.ewm.common.error;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import ru.practicum.ewm.core.util.DateTimeUtil;
+import ru.practicum.ewm.common.util.DateTimeUtil;
 
 import java.time.LocalDateTime;
 

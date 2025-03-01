@@ -1,4 +1,4 @@
-package ru.practicum.ewm.core.validation;
+package ru.practicum.ewm.common.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

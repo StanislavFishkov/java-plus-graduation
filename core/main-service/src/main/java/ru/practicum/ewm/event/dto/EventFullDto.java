@@ -3,7 +3,7 @@ package ru.practicum.ewm.event.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import ru.practicum.ewm.core.util.DateTimeUtil;
+import ru.practicum.ewm.common.util.DateTimeUtil;
 import ru.practicum.ewm.event.model.EventStates;
 import ru.practicum.ewm.location.dto.LocationDto;
 

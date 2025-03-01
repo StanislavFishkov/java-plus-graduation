@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.ewm.core.util.DateTimeUtil;
+import ru.practicum.ewm.common.util.DateTimeUtil;
 import ru.practicum.ewm.participationrequest.model.ParticipationRequestStatus;
 
 import java.time.LocalDateTime;

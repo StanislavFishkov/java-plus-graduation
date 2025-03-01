@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.ewm.core.validation.NullOrNotBlank;
+import ru.practicum.ewm.common.validation.NullOrNotBlank;
 
 @Data
 @Builder(toBuilder = true)
