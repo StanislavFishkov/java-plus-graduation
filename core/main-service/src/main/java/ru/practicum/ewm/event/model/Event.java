@@ -5,7 +5,6 @@ import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 import ru.practicum.ewm.categories.model.Category;
 import ru.practicum.ewm.location.model.Location;
-import ru.practicum.ewm.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -38,9 +37,7 @@ public class Event {
     @Builder.Default
     private Boolean requestModeration = true;
     private String title;
-    @ManyToOne
-    @JoinColumn(name = "initiator_id")
-    private User initiator;
+    private Long initiatorId;
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private EventStates state = EventStates.PENDING;

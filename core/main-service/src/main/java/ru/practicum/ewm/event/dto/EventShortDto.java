@@ -5,7 +5,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import ru.practicum.ewm.categories.dto.CategoryDto;
 import ru.practicum.ewm.common.util.DateTimeUtil;
-import ru.practicum.ewm.user.dto.UserShortDto;
+import ru.practicum.ewm.common.dto.user.UserShortDto;
 
 import java.time.LocalDateTime;
 

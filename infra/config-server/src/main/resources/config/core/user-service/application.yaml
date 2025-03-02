@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://ewm-db:5432/ewm-main
+    url: jdbc:postgresql://ewm-db:5432/user_db
     username: root
     password: root
   sql:

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, Long>, QuerydslPredicateExecutor<Event> {
-    List<Event> findAllByInitiator_Id(Long id, Pageable page);
+    List<Event> findAllByInitiatorId(Long id, Pageable page);
 
-    Optional<Event> findByIdAndInitiator_Id(Long id, Long initiatorId);
+    Optional<Event> findByIdAndInitiatorId(Long id, Long initiatorId);
 }

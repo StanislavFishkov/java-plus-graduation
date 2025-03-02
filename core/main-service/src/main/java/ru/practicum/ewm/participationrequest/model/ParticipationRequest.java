@@ -5,7 +5,6 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.proxy.HibernateProxy;
 import ru.practicum.ewm.event.model.Event;
-import ru.practicum.ewm.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -22,9 +21,7 @@ public class ParticipationRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "requester_id")
-    private User requester;
+    private Long requesterId;
 
     @ManyToOne
     @JoinColumn(name = "event_id")

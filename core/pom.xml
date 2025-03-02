@@ -14,7 +14,7 @@
     <modules>
         <module>main-service</module>
         <module>common</module>
-        <module>user</module>
+        <module>user-service</module>
     </modules>
 
 </project>

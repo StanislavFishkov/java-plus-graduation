@@ -19,7 +19,7 @@ logging:
       springframework:
         web:
           client:
-            RestTemplate: DEBUG
+            RestTemplate: INFO
         orm:
           jpa: INFO
       hibernate:

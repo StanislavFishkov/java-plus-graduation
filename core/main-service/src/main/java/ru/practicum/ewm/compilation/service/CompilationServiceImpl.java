@@ -4,9 +4,12 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.ewm.common.dto.user.UserShortDto;
+import ru.practicum.ewm.common.feignclient.UserClient;
 import ru.practicum.ewm.compilation.dto.CompilationDto;
 import ru.practicum.ewm.compilation.dto.CompilationRequestDto;
 import ru.practicum.ewm.compilation.dto.UpdateCompilationRequestDto;
@@ -21,6 +24,9 @@ import ru.practicum.ewm.event.repository.EventRepository;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -32,14 +38,27 @@ public class CompilationServiceImpl implements CompilationService {
     EventRepository eventRepository;
     CompilationMapper compilationMapper;
     EventMapper eventMapper;
+    UserClient userClient;
 
     @Override
     public List<CompilationDto> getCompilations(Boolean pinned, Integer from, Integer size) {
         log.info("getCompilations params: pinned = {}, from = {}, size = {}", pinned, from, size);
         PageRequest page = PagingUtil.pageOf(from, size);
 
-        return compilationRepository.findAllByPinned(pinned, page)
-                .map(compilation -> compilationMapper.toDto(compilation, eventMapper.toEventShortDtoList(compilation.getEvents())))
+        Page<Compilation> compilations = compilationRepository.findAllByPinned(pinned, page);
+
+        Map<Long, UserShortDto> users = userClient.getByIds(compilations
+                        .flatMap(compilation -> compilation.getEvents().stream())
+                        .map(Event::getId)
+                        .toList())
+                .stream()
+                .collect(Collectors.toMap(UserShortDto::getId, Function.identity()));
+
+        return compilations
+                .map(compilation -> compilationMapper.toDto(compilation, compilation.getEvents()
+                        .stream()
+                        .map(e -> eventMapper.toShortDto(e, users.get(e.getId())))
+                        .toList()))
                 .getContent();
     }
 
@@ -49,8 +68,18 @@ public class CompilationServiceImpl implements CompilationService {
         Compilation compilation = compilationRepository.findById(compilationId).orElseThrow(() -> new NotFoundException(
                 String.format("Подборка с ид %s не найдена", compilationId))
         );
+
+        Map<Long, UserShortDto> users = userClient.getByIds(compilation.getEvents().stream()
+                        .map(Event::getId)
+                        .toList())
+                .stream()
+                .collect(Collectors.toMap(UserShortDto::getId, Function.identity()));
+
         log.info("getById result compilation = {}", compilation);
-        return compilationMapper.toDto(compilation, eventMapper.toEventShortDtoList(compilation.getEvents()));
+        return compilationMapper.toDto(compilation, compilation.getEvents().stream()
+                .map(e -> eventMapper.toShortDto(e, users.get(e.getId())))
+                .toList()
+        );
     }
 
     @Override
@@ -59,9 +88,18 @@ public class CompilationServiceImpl implements CompilationService {
         log.info("addCompilation params: compilationRequestDto = {}", compilationRequestDto);
 
         List<Event> events = getAndCheckEventList(compilationRequestDto.getEvents());
+        Map<Long, UserShortDto> users = userClient.getByIds(events.stream()
+                        .map(Event::getId)
+                        .toList())
+                .stream()
+                .collect(Collectors.toMap(UserShortDto::getId, Function.identity()));
+
         Compilation compilation = compilationRepository.save(compilationMapper.toEntity(compilationRequestDto, events));
         log.info("addCompilation result compilation = {}", compilation);
-        return compilationMapper.toDto(compilation, eventMapper.toEventShortDtoList(compilation.getEvents()));
+        return compilationMapper.toDto(compilation, compilation.getEvents().stream()
+                .map(e -> eventMapper.toShortDto(e, users.get(e.getId())))
+                .toList()
+        );
     }
 
     @Override
@@ -72,11 +110,20 @@ public class CompilationServiceImpl implements CompilationService {
                 String.format("Подборка с ид %s не найдена", compilationId))
         );
         List<Event> events = getAndCheckEventList(compilationRequestDto.getEvents());
+        Map<Long, UserShortDto> users = userClient.getByIds(events.stream()
+                        .map(Event::getId)
+                        .toList())
+                .stream()
+                .collect(Collectors.toMap(UserShortDto::getId, Function.identity()));
+
         compilationMapper.update(compilationRequestDto, compilationId, events, compilation);
         compilation = compilationRepository.save(compilation);
         log.info("addCompilation result compilation = {}", compilation);
 
-        return compilationMapper.toDto(compilation, eventMapper.toEventShortDtoList(compilation.getEvents()));
+        return compilationMapper.toDto(compilation, compilation.getEvents().stream()
+                .map(e -> eventMapper.toShortDto(e, users.get(e.getId())))
+                .toList()
+        );
     }
 
     @Override

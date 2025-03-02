@@ -8,8 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.user.dto.UserDto;
-import ru.practicum.ewm.user.dto.UserRequestDto;
+import ru.practicum.ewm.common.dto.user.UserDto;
+import ru.practicum.ewm.common.dto.user.UserRequestDto;
+import ru.practicum.ewm.common.dto.user.UserShortDto;
+import ru.practicum.ewm.common.feignclient.UserClient;
 import ru.practicum.ewm.user.service.UserService;
 
 import java.util.List;
@@ -19,11 +21,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated
 @Slf4j
-public class AdminUserController {
+public class AdminUserController implements UserClient {
 
     private final UserService userService;
 
     @GetMapping
+    @Override
     public List<UserDto> getUsers(@RequestParam(required = false) List<Long> ids,
                                   @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
                                   @Positive @RequestParam(defaultValue = "10") Integer size) {
@@ -33,6 +36,7 @@ public class AdminUserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @Override
     public UserDto registerUser(@RequestBody @Valid UserRequestDto userRequestDto) {
         log.info("POST /admin/users with body({})", userRequestDto);
         return userService.registerUser(userRequestDto);
@@ -40,8 +44,23 @@ public class AdminUserController {
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Override
     public void delete(@PathVariable(name = "userId") Long userId) {
         log.info("DELETE /admin/users/{userID} userID = {})", userId);
         userService.delete(userId);
+    }
+
+    @GetMapping("/{userId}")
+    @Override
+    public UserShortDto getById(@PathVariable Long userId) {
+        log.info("GET /admin/users/{}", userId);
+        return userService.getById(userId);
+    }
+
+    @GetMapping("/ids")
+    @Override
+    public List<UserShortDto> getByIds(@RequestParam List<Long> userIds) {
+        log.info("GET /admin/users/ids with params(userIds = {})", userIds);
+        return userService.getUsers(userIds);
     }
 }

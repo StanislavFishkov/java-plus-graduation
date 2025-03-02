@@ -1,17 +1,13 @@
 spring:
   datasource:
     driverClassName: org.h2.Driver
-    url: jdbc:h2:mem:MainServDB;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    url: jdbc:h2:mem:UserDB;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
   h2:
     console:
       enabled: true
-  sql:
-    init:
-      schema-locations: classpath:schema-h2.sql
   mvc:
     log-request-details: true
 
-#debug: true
 logging:
   level:
     root: INFO
@@ -19,14 +15,10 @@ logging:
       springframework:
         web:
           client:
-            RestTemplate: DEBUG
+            RestTemplate: INFO
         orm:
           jpa: INFO
       hibernate:
         orm:
           jdbc:
             bind: trace
-#      apache:
-#        http: DEBUG
-#    httpclient:
-#      wire: DEBUG
