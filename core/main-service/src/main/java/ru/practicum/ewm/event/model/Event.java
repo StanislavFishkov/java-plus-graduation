@@ -5,7 +5,6 @@ import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 import ru.practicum.ewm.categories.model.Category;
 import ru.practicum.ewm.common.model.event.EventStates;
-import ru.practicum.ewm.location.model.Location;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -28,9 +27,7 @@ public class Event {
     private Category category;
     private String description;
     private LocalDateTime eventDate;
-    @ManyToOne
-    @JoinColumn(name = "location_id")
-    private Location location;
+    private Long locationId;
     @Builder.Default
     private Boolean paid = false;
     @Builder.Default

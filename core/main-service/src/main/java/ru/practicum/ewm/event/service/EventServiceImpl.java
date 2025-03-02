@@ -5,7 +5,6 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLTemplates;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -22,10 +21,12 @@ import org.springframework.stereotype.Service;
 import ru.practicum.ewm.categories.model.Category;
 import ru.practicum.ewm.categories.repository.CategoriesRepository;
 import ru.practicum.ewm.common.dto.event.*;
+import ru.practicum.ewm.common.dto.location.LocationDto;
 import ru.practicum.ewm.common.dto.user.UserShortDto;
 import ru.practicum.ewm.common.error.exception.ConflictDataException;
 import ru.practicum.ewm.common.error.exception.NotFoundException;
 import ru.practicum.ewm.common.error.exception.ValidationException;
+import ru.practicum.ewm.common.feignclient.LocationClient;
 import ru.practicum.ewm.common.feignclient.UserClient;
 import ru.practicum.ewm.common.model.event.EventStateActionAdmin;
 import ru.practicum.ewm.common.model.event.EventStateActionPrivate;
@@ -34,11 +35,8 @@ import ru.practicum.ewm.common.util.DateTimeUtil;
 import ru.practicum.ewm.common.util.PagingUtil;
 import ru.practicum.ewm.event.mapper.EventMapper;
 import ru.practicum.ewm.common.dto.location.NewLocationDto;
-import ru.practicum.ewm.location.mapper.LocationMapper;
 import ru.practicum.ewm.event.model.*;
 import ru.practicum.ewm.event.repository.EventRepository;
-import ru.practicum.ewm.location.repository.LocationRepository;
-import ru.practicum.ewm.location.model.Location;
 import ru.practicum.ewm.common.dto.participationrequest.ParticipationRequestDto;
 import ru.practicum.ewm.participationrequest.mapper.ParticipationRequestMapper;
 import ru.practicum.ewm.participationrequest.model.ParticipationRequest;
@@ -65,9 +63,8 @@ public class EventServiceImpl implements EventService {
     private final EventRepository eventRepository;
     private final CategoriesRepository categoriesRepository;
     private final UserClient userClient;
-    private final LocationRepository locationRepository;
+    private final LocationClient locationClient;
     private final EventMapper eventMapper;
-    private final LocationMapper locationMapper;
     private final ParticipationRequestRepository participationRequestRepository;
     private final ParticipationRequestMapper participationRequestMapper;
     private final EntityManager entityManager;
@@ -81,10 +78,10 @@ public class EventServiceImpl implements EventService {
 
         checkEventTime(newEventDto.getEventDate());
         Category category = categoriesRepository.findById(newEventDto.getCategory()).get();
-        Location location = getOrCreateLocation(newEventDto.getLocation());
+        LocationDto locationDto = getOrCreateLocation(newEventDto.getLocation());
 
-        Event event = eventRepository.save(eventMapper.toEvent(newEventDto, category, userId, location));
-        return eventMapper.toFullDto(event, userShortDto);
+        Event event = eventRepository.save(eventMapper.toEvent(newEventDto, category, userId, locationDto));
+        return eventMapper.toFullDto(event, userShortDto, locationDto);
     }
 
     @Override
@@ -108,8 +105,9 @@ public class EventServiceImpl implements EventService {
     public EventFullDto getEventById(Long userId, Long eventId) {
         UserShortDto userShortDto = checkAndGetUserById(userId);
         Event event = checkAndGetEventByIdAndInitiatorId(eventId, userId);
+        LocationDto locationDto = checkAndGetLocationById(event.getLocationId());
 
-        EventFullDto eventDto = eventMapper.toFullDto(event, userShortDto);
+        EventFullDto eventDto = eventMapper.toFullDto(event, userShortDto, locationDto);
         populateWithConfirmedRequests(List.of(event), List.of(eventDto));
         populateWithStats(List.of(eventDto));
 
@@ -127,7 +125,8 @@ public class EventServiceImpl implements EventService {
                                     "Event with id %s can't be changed because it is published.", event.getId()));
         checkEventTime(eventUpdateDto.getEventDate());
 
-        eventMapper.update(event, eventUpdateDto, getOrCreateLocation(eventUpdateDto.getLocation()));
+        LocationDto locationDto = getOrCreateLocation(eventUpdateDto.getLocation());
+        eventMapper.update(event, eventUpdateDto, locationDto);
         if (eventUpdateDto.getStateAction() != null) {
             setStateToEvent(eventUpdateDto, event);
         }
@@ -135,7 +134,7 @@ public class EventServiceImpl implements EventService {
 
         event = eventRepository.save(event);
 
-        EventFullDto eventDto = eventMapper.toFullDto(event, userShortDto);
+        EventFullDto eventDto = eventMapper.toFullDto(event, userShortDto, locationDto);
         populateWithConfirmedRequests(List.of(event), List.of(eventDto));
         populateWithStats(List.of(eventDto));
 
@@ -154,12 +153,12 @@ public class EventServiceImpl implements EventService {
                     .orElseThrow(() -> new NotFoundException("On Event admin update - Category doesn't exist with id: " +
                             updateEventAdminRequestDto.getCategory()));
 
-        event = eventMapper.update(event, updateEventAdminRequestDto, category,
-                getOrCreateLocation(updateEventAdminRequestDto.getLocation()));
+        LocationDto locationDto = getOrCreateLocation(updateEventAdminRequestDto.getLocation());
+        event = eventMapper.update(event, updateEventAdminRequestDto, category, locationDto);
         calculateNewEventState(event, updateEventAdminRequestDto.getStateAction());
 
         event = eventRepository.save(event);
-        EventFullDto eventDto = eventMapper.toFullDto(event, userShortDto);
+        EventFullDto eventDto = eventMapper.toFullDto(event, userShortDto, locationDto);
         populateWithConfirmedRequests(List.of(event), List.of(eventDto));
         populateWithStats(List.of(eventDto));
 
@@ -175,8 +174,9 @@ public class EventServiceImpl implements EventService {
             throw new NotFoundException("On Event public get - Event isn't published with id: " + eventId);
 
         UserShortDto userShortDto = checkAndGetUserById(event.getInitiatorId());
+        LocationDto locationDto = checkAndGetLocationById(event.getLocationId());
 
-        EventFullDto eventDto = eventMapper.toFullDto(event, userShortDto);
+        EventFullDto eventDto = eventMapper.toFullDto(event, userShortDto, locationDto);
         populateWithConfirmedRequests(List.of(event), List.of(eventDto));
         populateWithStats(List.of(eventDto));
 
@@ -208,11 +208,13 @@ public class EventServiceImpl implements EventService {
         List<Event> events = eventRepository.findAll(builder,
                 PagingUtil.pageOf(from, size).withSort(new QSort(event.createdOn.desc()))).toList();
 
-        Map<Long, UserShortDto> users = userClient.getByIds(events.stream().map(Event::getId).toList()).stream()
+        Map<Long, UserShortDto> users = userClient.getByIds(events.stream().map(Event::getInitiatorId).toList()).stream()
                 .collect(Collectors.toMap(UserShortDto::getId, Function.identity()));
+        Map<Long, LocationDto> locations = locationClient.getByIds(events.stream().map(Event::getLocationId).toList()).stream()
+                .collect(Collectors.toMap(LocationDto::getId, Function.identity()));
 
         List<EventFullDto> eventsDto = events.stream()
-                .map(e -> eventMapper.toFullDto(e, users.get(e.getInitiatorId())))
+                .map(e -> eventMapper.toFullDto(e, users.get(e.getInitiatorId()), locations.get(e.getLocationId())))
                 .toList();
         populateWithConfirmedRequests(events, eventsDto);
         populateWithStats(eventsDto);
@@ -248,13 +250,13 @@ public class EventServiceImpl implements EventService {
                 builder.and(qEvent.eventDate.loe(filters.getRangeEnd()));
         }
 
-        if (filters.getLon() != null && filters.getLat() != null)
-            builder.and(Expressions.booleanTemplate("distance({0}, {1}, {2}, {3}) <= {4}",
-                    qEvent.location.lat,
-                    qEvent.location.lon,
-                    filters.getLat(),
-                    filters.getLon(),
-                    filters.getRadius()));
+        if (filters.getLon() != null && filters.getLat() != null) {
+            List<Long> locationsIds = locationClient.getByCoordinatesAndRadius(filters.getLat(), filters.getLon(),
+                            filters.getRadius()).stream()
+                    .map(LocationDto::getId)
+                    .toList();
+            builder.and(qEvent.locationId.in(locationsIds));
+        }
 
         PageRequest page = PagingUtil.pageOf(from, size);
         if (filters.getSort() != null && filters.getSort() == EventPublicFilterParamsDto.EventSort.EVENT_DATE)
@@ -262,7 +264,7 @@ public class EventServiceImpl implements EventService {
 
         List<Event> events = eventRepository.findAll(builder, page).toList();
 
-        Map<Long, UserShortDto> users = userClient.getByIds(events.stream().map(Event::getId).toList()).stream()
+        Map<Long, UserShortDto> users = userClient.getByIds(events.stream().map(Event::getInitiatorId).toList()).stream()
                 .collect(Collectors.toMap(UserShortDto::getId, Function.identity()));
 
         List<EventShortDto> eventsDto = events.stream()
@@ -353,9 +355,13 @@ public class EventServiceImpl implements EventService {
         return null;
     }
 
-    private Location getOrCreateLocation(NewLocationDto newLocationDto) {
-        return newLocationDto == null ? null : locationRepository.findByLatAndLon(newLocationDto.getLat(), newLocationDto.getLon())
-                .orElseGet(() -> locationRepository.save(locationMapper.toLocation(newLocationDto)));
+    @Override
+    public boolean existsByLocationId(Long locationId) {
+        return eventRepository.existsByLocationId(locationId);
+    }
+
+    private LocationDto getOrCreateLocation(NewLocationDto newLocationDto) {
+        return newLocationDto == null ? null : locationClient.createLocationByCoordinates(newLocationDto.getLat(), newLocationDto.getLon());
     }
 
     private void calculateNewEventState(Event event, EventStateActionAdmin stateAction) {
@@ -489,6 +495,14 @@ public class EventServiceImpl implements EventService {
             return userClient.getById(userId);
         } catch (FeignException.FeignClientException e) {
             throw new NotFoundException("Такого пользователя не существует: " + userId);
+        }
+    }
+
+    private LocationDto checkAndGetLocationById(Long locationId) {
+        try {
+            return locationClient.getById(locationId);
+        } catch (FeignException.FeignClientException e) {
+            throw new NotFoundException("Location doesn't exist with id " + locationId);
         }
     }
 }

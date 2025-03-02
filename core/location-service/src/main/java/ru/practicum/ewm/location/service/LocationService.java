@@ -12,7 +12,13 @@ public interface LocationService {
 
     LocationDto getById(Long locationId);
 
+    List<LocationDto> getByIds(List<Long> locationIds);
+
+    List<LocationDto> getByCoordinatesAndRadius(double lat, double lon, double radius);
+
     LocationDto addLocation(NewLocationDto newLocationDto);
+
+    LocationDto createLocationByCoordinates(double lat, double lon);
 
     LocationDto updateLocation(Long locationId, UpdateLocationAdminRequestDto updateLocationAdminRequestDto);
 

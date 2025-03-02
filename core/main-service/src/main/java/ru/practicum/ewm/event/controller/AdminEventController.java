@@ -15,19 +15,27 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/admin/events")
-public class AdminEventController {
+public class AdminEventController implements ru.practicum.ewm.common.feignclient.EventClient {
     private final EventService eventService;
 
     @PatchMapping("/{eventId}")
+    @Override
     public EventFullDto update(@PathVariable Long eventId,
                                @Valid @RequestBody UpdateEventAdminRequestDto updateEventAdminRequestDto) {
         return eventService.update(eventId, updateEventAdminRequestDto);
     }
 
     @GetMapping
+    @Override
     public List<EventFullDto> get(@Valid EventAdminFilterParamsDto filters,
                                   @PositiveOrZero @RequestParam(defaultValue = "0") int from,
                                   @Positive @RequestParam(defaultValue = "10") int size) {
         return eventService.get(filters, from, size);
+    }
+
+    @GetMapping("/location")
+    @Override
+    public boolean existsByLocationId(@RequestParam Long locationId) {
+        return eventService.existsByLocationId(locationId);
     }
 }

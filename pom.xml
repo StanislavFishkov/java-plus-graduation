@@ -21,6 +21,7 @@
         <module>stats</module>
         <module>infra</module>
         <module>core</module>
+        <module>core/location-service</module>
     </modules>
 
     <properties>
