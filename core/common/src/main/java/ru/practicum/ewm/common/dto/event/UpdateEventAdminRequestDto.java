@@ -1,22 +1,25 @@
-package ru.practicum.ewm.event.dto;
+package ru.practicum.ewm.common.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.ewm.common.util.DateTimeUtil;
 import ru.practicum.ewm.common.validation.NullOrNotBlank;
-import ru.practicum.ewm.event.model.EventStateActionPrivate;
-import ru.practicum.ewm.location.dto.NewLocationDto;
+import ru.practicum.ewm.common.model.event.EventStateActionAdmin;
+import ru.practicum.ewm.common.dto.location.NewLocationDto;
 
 import java.time.LocalDateTime;
 
 @Data
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateEventUserRequestDto {
+public class UpdateEventAdminRequestDto {
     @NullOrNotBlank
     @Size(min = 20, max = 2000)
     private String annotation;
@@ -24,6 +27,7 @@ public class UpdateEventUserRequestDto {
     @NullOrNotBlank
     @Size(min = 20, max = 7000)
     private String description;
+    @Future
     @JsonFormat(pattern = DateTimeUtil.DATE_TIME_FORMAT)
     private LocalDateTime eventDate;
     private NewLocationDto location;
@@ -34,5 +38,5 @@ public class UpdateEventUserRequestDto {
     @NullOrNotBlank
     @Size(min = 3, max = 120)
     private String title;
-    private EventStateActionPrivate stateAction;
+    private EventStateActionAdmin stateAction;
 }

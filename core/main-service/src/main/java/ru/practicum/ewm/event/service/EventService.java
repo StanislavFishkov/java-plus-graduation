@@ -1,8 +1,8 @@
 package ru.practicum.ewm.event.service;
 
 import jakarta.servlet.http.HttpServletRequest;
-import ru.practicum.ewm.event.dto.*;
-import ru.practicum.ewm.participationrequest.dto.ParticipationRequestDto;
+import ru.practicum.ewm.common.dto.event.*;
+import ru.practicum.ewm.common.dto.participationrequest.ParticipationRequestDto;
 
 import java.util.List;
 

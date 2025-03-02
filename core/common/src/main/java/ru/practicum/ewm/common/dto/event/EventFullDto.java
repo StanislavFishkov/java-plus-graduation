@@ -1,11 +1,11 @@
-package ru.practicum.ewm.event.dto;
+package ru.practicum.ewm.common.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import ru.practicum.ewm.common.util.DateTimeUtil;
-import ru.practicum.ewm.event.model.EventStates;
-import ru.practicum.ewm.location.dto.LocationDto;
+import ru.practicum.ewm.common.model.event.EventStates;
+import ru.practicum.ewm.common.dto.location.LocationDto;
 
 import java.time.LocalDateTime;
 

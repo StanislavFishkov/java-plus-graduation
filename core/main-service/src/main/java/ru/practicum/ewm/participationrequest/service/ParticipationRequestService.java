@@ -1,6 +1,6 @@
 package ru.practicum.ewm.participationrequest.service;
 
-import ru.practicum.ewm.participationrequest.dto.ParticipationRequestDto;
+import ru.practicum.ewm.common.dto.participationrequest.ParticipationRequestDto;
 
 import java.util.List;
 

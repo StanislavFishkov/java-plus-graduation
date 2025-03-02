@@ -4,11 +4,11 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
-import ru.practicum.ewm.compilation.dto.CompilationDto;
-import ru.practicum.ewm.compilation.dto.CompilationRequestDto;
-import ru.practicum.ewm.compilation.dto.UpdateCompilationRequestDto;
+import ru.practicum.ewm.common.dto.compilation.CompilationDto;
+import ru.practicum.ewm.common.dto.compilation.CompilationRequestDto;
+import ru.practicum.ewm.common.dto.compilation.UpdateCompilationRequestDto;
 import ru.practicum.ewm.compilation.model.Compilation;
-import ru.practicum.ewm.event.dto.EventShortDto;
+import ru.practicum.ewm.common.dto.event.EventShortDto;
 import ru.practicum.ewm.event.model.Event;
 
 import java.util.List;

@@ -6,9 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.location.dto.LocationDto;
-import ru.practicum.ewm.location.dto.NewLocationDto;
-import ru.practicum.ewm.location.dto.UpdateLocationAdminRequestDto;
+import ru.practicum.ewm.common.dto.location.LocationDto;
+import ru.practicum.ewm.common.dto.location.NewLocationDto;
+import ru.practicum.ewm.common.dto.location.UpdateLocationAdminRequestDto;
 import ru.practicum.ewm.location.service.LocationService;
 
 @RestController

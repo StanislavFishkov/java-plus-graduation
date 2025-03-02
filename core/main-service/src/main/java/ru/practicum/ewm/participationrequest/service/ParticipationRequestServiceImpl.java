@@ -10,12 +10,12 @@ import ru.practicum.ewm.common.error.exception.ConflictDataException;
 import ru.practicum.ewm.common.error.exception.NotFoundException;
 import ru.practicum.ewm.common.feignclient.UserClient;
 import ru.practicum.ewm.event.model.Event;
-import ru.practicum.ewm.event.model.EventStates;
+import ru.practicum.ewm.common.model.event.EventStates;
 import ru.practicum.ewm.event.repository.EventRepository;
-import ru.practicum.ewm.participationrequest.dto.ParticipationRequestDto;
+import ru.practicum.ewm.common.dto.participationrequest.ParticipationRequestDto;
 import ru.practicum.ewm.participationrequest.mapper.ParticipationRequestMapper;
 import ru.practicum.ewm.participationrequest.model.ParticipationRequest;
-import ru.practicum.ewm.participationrequest.model.ParticipationRequestStatus;
+import ru.practicum.ewm.common.model.participationrequest.ParticipationRequestStatus;
 import ru.practicum.ewm.participationrequest.repository.ParticipationRequestRepository;
 
 import java.util.List;

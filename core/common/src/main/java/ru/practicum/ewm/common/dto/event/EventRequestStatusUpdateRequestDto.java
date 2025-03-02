@@ -1,9 +1,9 @@
-package ru.practicum.ewm.event.dto;
+package ru.practicum.ewm.common.dto.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.ewm.participationrequest.model.ParticipationRequestStatus;
+import ru.practicum.ewm.common.model.participationrequest.ParticipationRequestStatus;
 
 import java.util.List;
 

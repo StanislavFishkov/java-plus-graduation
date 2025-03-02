@@ -1,9 +1,9 @@
-package ru.practicum.ewm.event.dto;
+package ru.practicum.ewm.common.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import ru.practicum.ewm.categories.dto.CategoryDto;
+import ru.practicum.ewm.common.dto.categories.CategoryDto;
 import ru.practicum.ewm.common.util.DateTimeUtil;
 import ru.practicum.ewm.common.dto.user.UserShortDto;
 

@@ -1,4 +1,4 @@
-package ru.practicum.ewm.event.model;
+package ru.practicum.ewm.common.model.event;
 
 public enum EventStateActionPrivate {
     SEND_TO_REVIEW,

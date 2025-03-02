@@ -5,9 +5,9 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.event.dto.EventFullDto;
-import ru.practicum.ewm.event.dto.EventAdminFilterParamsDto;
-import ru.practicum.ewm.event.dto.UpdateEventAdminRequestDto;
+import ru.practicum.ewm.common.dto.event.EventFullDto;
+import ru.practicum.ewm.common.dto.event.EventAdminFilterParamsDto;
+import ru.practicum.ewm.common.dto.event.UpdateEventAdminRequestDto;
 import ru.practicum.ewm.event.service.EventService;
 
 import java.util.List;

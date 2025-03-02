@@ -1,4 +1,4 @@
-package ru.practicum.ewm.participationrequest.model;
+package ru.practicum.ewm.common.model.participationrequest;
 
 public enum ParticipationRequestStatus {
     PENDING,

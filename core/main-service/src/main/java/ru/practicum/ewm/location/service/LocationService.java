@@ -1,8 +1,8 @@
 package ru.practicum.ewm.location.service;
 
-import ru.practicum.ewm.location.dto.LocationDto;
-import ru.practicum.ewm.location.dto.NewLocationDto;
-import ru.practicum.ewm.location.dto.UpdateLocationAdminRequestDto;
+import ru.practicum.ewm.common.dto.location.LocationDto;
+import ru.practicum.ewm.common.dto.location.NewLocationDto;
+import ru.practicum.ewm.common.dto.location.UpdateLocationAdminRequestDto;
 
 import java.util.List;
 

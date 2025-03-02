@@ -6,7 +6,7 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.participationrequest.model.ParticipationRequest;
-import ru.practicum.ewm.participationrequest.model.ParticipationRequestStatus;
+import ru.practicum.ewm.common.model.participationrequest.ParticipationRequestStatus;
 
 import java.util.List;
 

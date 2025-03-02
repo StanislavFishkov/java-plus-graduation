@@ -2,8 +2,8 @@ package ru.practicum.ewm.event.mapper;
 
 import org.mapstruct.*;
 import ru.practicum.ewm.categories.model.Category;
+import ru.practicum.ewm.common.dto.event.*;
 import ru.practicum.ewm.common.dto.user.UserShortDto;
-import ru.practicum.ewm.event.dto.*;
 import ru.practicum.ewm.event.model.Event;
 import ru.practicum.ewm.location.mapper.LocationMapper;
 import ru.practicum.ewm.location.model.Location;

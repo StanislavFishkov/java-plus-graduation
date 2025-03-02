@@ -1,45 +1,38 @@
-package ru.practicum.ewm.event.dto;
+package ru.practicum.ewm.common.dto.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.ewm.common.util.DateTimeUtil;
-import ru.practicum.ewm.location.dto.NewLocationDto;
+import ru.practicum.ewm.common.validation.NullOrNotBlank;
+import ru.practicum.ewm.common.model.event.EventStateActionPrivate;
+import ru.practicum.ewm.common.dto.location.NewLocationDto;
 
 import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class NewEventDto {
-    @NotBlank
+public class UpdateEventUserRequestDto {
+    @NullOrNotBlank
     @Size(min = 20, max = 2000)
     private String annotation;
-
-    @NotNull
     private Long category;
-
-    @NotBlank
+    @NullOrNotBlank
     @Size(min = 20, max = 7000)
     private String description;
-
-    @Future
     @JsonFormat(pattern = DateTimeUtil.DATE_TIME_FORMAT)
     private LocalDateTime eventDate;
-
-    @NotNull
     private NewLocationDto location;
-
     private Boolean paid;
-
-    @PositiveOrZero(message = "Необходимо указать количество участников")
+    @PositiveOrZero
     private Integer participantLimit;
-
     private Boolean requestModeration;
-
-    @NotBlank
+    @NullOrNotBlank
     @Size(min = 3, max = 120)
     private String title;
+    private EventStateActionPrivate stateAction;
 }

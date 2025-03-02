@@ -3,7 +3,7 @@ package ru.practicum.ewm.participationrequest.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
-import ru.practicum.ewm.participationrequest.dto.ParticipationRequestDto;
+import ru.practicum.ewm.common.dto.participationrequest.ParticipationRequestDto;
 import ru.practicum.ewm.participationrequest.model.ParticipationRequest;
 
 import java.util.List;

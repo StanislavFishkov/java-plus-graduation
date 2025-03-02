@@ -1,6 +1,5 @@
-package ru.practicum.ewm.compilation.dto;
+package ru.practicum.ewm.common.dto.compilation;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,11 +12,9 @@ import java.util.List;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class CompilationRequestDto {
-    @NotBlank
+public class UpdateCompilationRequestDto {
     @Size(max = 50)
     private String title;
-    @Builder.Default
-    private Boolean pinned = false;
+    private Boolean pinned;
     private List<Long> events;
 }

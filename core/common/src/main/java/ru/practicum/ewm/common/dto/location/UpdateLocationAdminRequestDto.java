@@ -1,4 +1,4 @@
-package ru.practicum.ewm.location.dto;
+package ru.practicum.ewm.common.dto.location;
 
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;

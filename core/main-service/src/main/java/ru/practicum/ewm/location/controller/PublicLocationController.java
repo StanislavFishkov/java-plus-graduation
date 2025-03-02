@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.location.dto.LocationDto;
+import ru.practicum.ewm.common.dto.location.LocationDto;
 import ru.practicum.ewm.location.service.LocationService;
 
 import java.util.List;

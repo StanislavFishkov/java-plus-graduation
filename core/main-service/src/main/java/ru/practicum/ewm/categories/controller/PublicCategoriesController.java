@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.categories.dto.CategoryDto;
+import ru.practicum.ewm.common.dto.categories.CategoryDto;
 import ru.practicum.ewm.categories.service.CategoriesService;
 
 import java.util.List;

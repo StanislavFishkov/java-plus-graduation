@@ -1,4 +1,4 @@
-package ru.practicum.ewm.location.dto;
+package ru.practicum.ewm.common.dto.categories;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,10 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class LocationDto {
+public class CategoryDto {
     private Long id;
-    private double lat;
-    private double lon;
     private String name;
-    private String address;
 }

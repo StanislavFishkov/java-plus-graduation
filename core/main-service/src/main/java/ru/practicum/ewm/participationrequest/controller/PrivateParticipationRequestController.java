@@ -3,7 +3,7 @@ package ru.practicum.ewm.participationrequest.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.ewm.participationrequest.dto.ParticipationRequestDto;
+import ru.practicum.ewm.common.dto.participationrequest.ParticipationRequestDto;
 import ru.practicum.ewm.participationrequest.service.ParticipationRequestService;
 
 import java.util.List;
