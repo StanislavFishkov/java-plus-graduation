@@ -1,8 +1,10 @@
 package ru.practicum.ewm.common.error;
 
+import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -54,6 +56,17 @@ public class ErrorHandler {
                 "Incorrectly made request.",
                 e.getMessage(),
                 getStackTrace(e));
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ApiError> handleFeign(final FeignException e) {
+        HttpStatus httpStatus = HttpStatus.valueOf(e.status());
+        log.error("{} {}", httpStatus, e.getMessage(), e);
+        return new ResponseEntity<>(new ApiError(
+                httpStatus,
+                httpStatus.getReasonPhrase(),
+                e.getMessage(),
+                getStackTrace(e)), httpStatus);
     }
 
     @ExceptionHandler

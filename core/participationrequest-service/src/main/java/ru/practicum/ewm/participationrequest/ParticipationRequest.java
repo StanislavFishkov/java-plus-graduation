@@ -1,4 +1,4 @@
-package ru.practicum.ewm.user;
+package ru.practicum.ewm.participationrequest;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,8 +9,8 @@ import ru.practicum.ewm.common.error.ErrorHandler;
 @EnableFeignClients(basePackages = "ru.practicum.ewm.common.feignclient")
 @Import({ErrorHandler.class})
 @SpringBootApplication
-public class User {
+public class ParticipationRequest {
     public static void main(String[] args) {
-        SpringApplication.run(User.class, args);
+        SpringApplication.run(ParticipationRequest.class, args);
     }
 }

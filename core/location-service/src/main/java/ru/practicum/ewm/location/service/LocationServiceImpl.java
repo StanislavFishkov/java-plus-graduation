@@ -1,6 +1,5 @@
 package ru.practicum.ewm.location.service;
 
-import feign.FeignException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -105,12 +104,8 @@ public class LocationServiceImpl implements  LocationService {
 
     @Override
     public void delete(Long locationId) {
-        try {
-            if (eventClient.existsByLocationId(locationId))
-                throw new ConflictDataException("Location with id %s can't be deleted, because of existing events".formatted(locationId));
-        } catch (FeignException.FeignClientException e) {
-            throw new NotFoundException("Location with id %s can't be deleted, because event service is down".formatted(locationId));
-        }
+        if (eventClient.existsByLocationId(locationId))
+            throw new ConflictDataException("Location with id %s can't be deleted, because of existing events".formatted(locationId));
 
         locationRepository.deleteById(locationId);
         log.info("Location deleted with id: {}", locationId);

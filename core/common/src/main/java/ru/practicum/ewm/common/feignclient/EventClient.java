@@ -13,7 +13,7 @@ import ru.practicum.ewm.common.dto.event.UpdateEventAdminRequestDto;
 import java.util.List;
 
 @Validated
-@FeignClient(name = "main-service", path = "/admin/events")
+@FeignClient(name = "event-service", path = "/admin/events")
 public interface EventClient {
     @PatchMapping("/{eventId}")
     EventFullDto update(@PathVariable Long eventId,
@@ -26,4 +26,7 @@ public interface EventClient {
 
     @GetMapping("/location")
     boolean existsByLocationId(@RequestParam Long locationId);
+
+    @GetMapping("/{eventId}")
+    EventFullDto getById(@PathVariable Long eventId);
 }
