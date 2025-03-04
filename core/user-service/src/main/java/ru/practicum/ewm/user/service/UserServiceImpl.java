@@ -3,12 +3,14 @@ package ru.practicum.ewm.user.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.common.dto.user.UserDto;
 import ru.practicum.ewm.common.dto.user.UserRequestDto;
 import ru.practicum.ewm.common.dto.user.UserShortDto;
 import ru.practicum.ewm.common.error.exception.NotFoundException;
+import ru.practicum.ewm.common.util.PagingUtil;
 import ru.practicum.ewm.user.mapper.UserMapper;
 import ru.practicum.ewm.user.model.User;
 import ru.practicum.ewm.user.repository.UserRepository;
@@ -45,7 +47,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDto> getUsers(List<Long> ids, Integer from, Integer size) {
         log.info("getUsers params: ids = {}, from = {}, size = {}", ids, from, size);
-        PageRequest page = PageRequest.of(from > 0 ? from / size : 0, size);
+        PageRequest page = PagingUtil.pageOf(from, size).withSort(Sort.by(Sort.Order.asc("id")));
 
         if (ids == null || ids.isEmpty()) {
             log.info("getUsers call: findAll");
