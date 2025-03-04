@@ -1,6 +1,5 @@
 package ru.practicum.ewm.participationrequest.service;
 
-import ru.practicum.ewm.common.dto.event.EventFullDto;
 import ru.practicum.ewm.common.dto.event.EventRequestStatusUpdateRequestDto;
 import ru.practicum.ewm.common.dto.event.EventRequestStatusUpdateResultDto;
 import ru.practicum.ewm.common.dto.participationrequest.ParticipationRequestDto;
@@ -9,8 +8,8 @@ import ru.practicum.ewm.common.model.participationrequest.ParticipationRequestSt
 import java.util.List;
 import java.util.Map;
 
-public interface ParticipationRequestService {
-    ParticipationRequestDto create(Long userId, EventFullDto event);
+public interface ParticipationRequestFacade {
+    ParticipationRequestDto create(Long userId, Long eventId);
 
     List<ParticipationRequestDto> get(Long userId);
 

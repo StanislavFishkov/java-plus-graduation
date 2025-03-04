@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.common.dto.event.EventFullDto;
 import ru.practicum.ewm.common.dto.event.EventPublicFilterParamsDto;
 import ru.practicum.ewm.common.dto.event.EventShortDto;
-import ru.practicum.ewm.event.event.service.EventService;
+import ru.practicum.ewm.event.event.service.EventFacade;
 
 import java.util.List;
 
@@ -17,11 +17,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping(path = "/events")
 public class PublicEventController {
-    private final EventService eventService;
+    private final EventFacade eventFacade;
 
     @GetMapping("/{id}")
     public EventFullDto get(@PathVariable("id") Long eventId, HttpServletRequest request) {
-        return eventService.get(eventId, request);
+        return eventFacade.get(eventId, request);
     }
 
     @GetMapping
@@ -29,6 +29,6 @@ public class PublicEventController {
                                    @PositiveOrZero @RequestParam(defaultValue = "0") int from,
                                    @Positive @RequestParam(defaultValue = "10") int size,
                                    HttpServletRequest request) {
-        return eventService.get(filters, from, size, request);
+        return eventFacade.get(filters, from, size, request);
     }
 }

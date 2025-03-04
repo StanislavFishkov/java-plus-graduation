@@ -11,8 +11,6 @@ import ru.practicum.ewm.common.dto.event.EventRequestStatusUpdateResultDto;
 import ru.practicum.ewm.common.dto.participationrequest.ParticipationRequestDto;
 import ru.practicum.ewm.common.error.exception.ConflictDataException;
 import ru.practicum.ewm.common.error.exception.NotFoundException;
-import ru.practicum.ewm.common.feignclient.EventClient;
-import ru.practicum.ewm.common.feignclient.UserClient;
 import ru.practicum.ewm.common.model.event.EventStates;
 import ru.practicum.ewm.common.model.participationrequest.ParticipationRequestStatus;
 import ru.practicum.ewm.participationrequest.mapper.ParticipationRequestMapper;
@@ -32,14 +30,11 @@ import java.util.stream.Stream;
 public class ParticipationRequestServiceImpl implements ParticipationRequestService {
     private final ParticipationRequestRepository participationRequestRepository;
     private final ParticipationRequestMapper participationRequestMapper;
-    private final UserClient userClient;
-    private final EventClient eventClient;
 
     @Override
     @Transactional
-    public ParticipationRequestDto create(Long userId, Long eventId) {
-        userClient.getById(userId);
-        EventFullDto event = eventClient.getById(eventId);
+    public ParticipationRequestDto create(Long userId, EventFullDto event) {
+        final Long eventId = event.getId();
 
         if (!event.getState().equals(EventStates.PUBLISHED))
             throw new ConflictDataException("On part. request create - " +
@@ -78,8 +73,6 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
 
     @Override
     public List<ParticipationRequestDto> get(Long userId) {
-        userClient.getById(userId);
-
         List<ParticipationRequest> participationRequests = participationRequestRepository.findByRequesterId(userId);
         log.trace("Participation requests are requested by user with id {}", userId);
         return participationRequestMapper.toDto(participationRequests);
@@ -88,8 +81,6 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
     @Override
     @Transactional
     public ParticipationRequestDto cancel(Long userId, Long requestId) {
-        userClient.getById(userId);
-
         ParticipationRequest participationRequest = participationRequestRepository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("On part. request cancel - Request doesn't exist with id: " + requestId));
 

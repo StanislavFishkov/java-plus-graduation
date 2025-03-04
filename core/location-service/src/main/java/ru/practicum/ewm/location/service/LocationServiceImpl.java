@@ -9,9 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.common.dto.location.LocationDto;
 import ru.practicum.ewm.common.dto.location.NewLocationDto;
 import ru.practicum.ewm.common.dto.location.UpdateLocationAdminRequestDto;
-import ru.practicum.ewm.common.error.exception.ConflictDataException;
 import ru.practicum.ewm.common.error.exception.NotFoundException;
-import ru.practicum.ewm.common.feignclient.EventClient;
 import ru.practicum.ewm.common.util.PagingUtil;
 import ru.practicum.ewm.location.mapper.LocationMapper;
 import ru.practicum.ewm.location.model.Location;
@@ -23,14 +21,13 @@ import java.util.Optional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class LocationServiceImpl implements  LocationService {
     LocationRepository locationRepository;
     LocationMapper locationMapper;
-    EventClient eventClient;
 
     @Override
-    @Transactional(readOnly = true)
     public List<LocationDto> getLocations(Integer from, Integer size) {
         log.info("start getLocations by from {} size {}", from, size);
         return locationRepository.findAll(PagingUtil.pageOf(from, size)).stream()
@@ -38,7 +35,6 @@ public class LocationServiceImpl implements  LocationService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public LocationDto getById(Long locationId) {
         log.info("getById params: id = {}", locationId);
         Location location = locationRepository.findById(locationId).orElseThrow(() -> new NotFoundException(
@@ -49,7 +45,6 @@ public class LocationServiceImpl implements  LocationService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<LocationDto> getByIds(List<Long> locationIds) {
         log.info("getByIds params: locationIds = {}", locationIds);
         List<Location> locations = locationRepository.findAllById(locationIds);
@@ -58,7 +53,6 @@ public class LocationServiceImpl implements  LocationService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<LocationDto> getByCoordinatesAndRadius(double lat, double lon, double radius) {
         log.info("getByCoordinatesAndRadius params: lat = {}, lon = {}, radius = {}", lat, lon, radius);
         List<Location> locations = locationRepository.findAllByCoordinatesAndRadius(lat, lon, radius);
@@ -103,10 +97,8 @@ public class LocationServiceImpl implements  LocationService {
     }
 
     @Override
+    @Transactional
     public void delete(Long locationId) {
-        if (eventClient.existsByLocationId(locationId))
-            throw new ConflictDataException("Location with id %s can't be deleted, because of existing events".formatted(locationId));
-
         locationRepository.deleteById(locationId);
         log.info("Location deleted with id: {}", locationId);
     }

@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.common.dto.location.LocationDto;
-import ru.practicum.ewm.location.service.LocationService;
+import ru.practicum.ewm.location.service.LocationFacade;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
 @Validated
 @Slf4j
 public class PublicLocationController {
-    private final LocationService locationService;
+    private final LocationFacade locationService;
 
     @GetMapping
     public List<LocationDto> getLocations(@RequestParam(defaultValue = "0") Integer from,
