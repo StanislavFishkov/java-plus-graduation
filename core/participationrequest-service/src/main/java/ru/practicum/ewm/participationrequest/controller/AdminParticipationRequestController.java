@@ -2,7 +2,6 @@ package ru.practicum.ewm.participationrequest.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.common.dto.event.EventRequestStatusUpdateRequestDto;
 import ru.practicum.ewm.common.dto.event.EventRequestStatusUpdateResultDto;
@@ -15,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/admin/requests")

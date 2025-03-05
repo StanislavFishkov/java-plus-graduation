@@ -149,8 +149,8 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
             if ((participantsLimit - (confirmedRequestsCount) - statusUpdateRequest.getRequestIds().size()) >= 0) {
                 for (ParticipationRequest request : requestToChangeStatus) {
                     request.setStatus(ParticipationRequestStatus.CONFIRMED);
-                    participationRequestRepository.save(request);
                 }
+                participationRequestRepository.saveAll(requestToChangeStatus);
                 return new EventRequestStatusUpdateResultDto(requestToChangeStatus
                         .stream().map(participationRequestMapper::toDto)
                         .toList(), null);
@@ -168,8 +168,8 @@ public class ParticipationRequestServiceImpl implements ParticipationRequestServ
                     throw new ConflictDataException("Заявка" + request.getStatus() + "уже подтверждена.");
                 }
                 request.setStatus(ParticipationRequestStatus.REJECTED);
-                participationRequestRepository.save(request);
             }
+            participationRequestRepository.saveAll(requestToChangeStatus);
             return new EventRequestStatusUpdateResultDto(null, requestToChangeStatus
                     .stream().map(participationRequestMapper::toDto)
                     .toList());

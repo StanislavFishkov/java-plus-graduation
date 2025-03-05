@@ -1,7 +1,6 @@
 package ru.practicum.ewm.common.feignclient;
 
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.common.dto.event.EventRequestStatusUpdateRequestDto;
 import ru.practicum.ewm.common.dto.event.EventRequestStatusUpdateResultDto;
@@ -11,7 +10,6 @@ import ru.practicum.ewm.common.model.participationrequest.ParticipationRequestSt
 import java.util.List;
 import java.util.Map;
 
-@Validated
 @FeignClient(name = "participationrequest-service", path = "/admin/requests")
 public interface ParticipationRequestClient {
     @GetMapping

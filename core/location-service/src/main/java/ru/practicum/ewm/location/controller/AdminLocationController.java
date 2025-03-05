@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.common.dto.location.LocationDto;
 import ru.practicum.ewm.common.dto.location.NewLocationDto;
@@ -17,7 +16,6 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/admin/locations")
 @RequiredArgsConstructor
-@Validated
 @Slf4j
 public class AdminLocationController implements LocationClient {
     private final LocationFacade locationFacade;

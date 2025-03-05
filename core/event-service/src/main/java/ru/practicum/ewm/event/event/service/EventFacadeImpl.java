@@ -9,14 +9,11 @@ import ru.practicum.ewm.common.dto.location.LocationDto;
 import ru.practicum.ewm.common.dto.location.NewLocationDto;
 import ru.practicum.ewm.common.dto.participationrequest.ParticipationRequestDto;
 import ru.practicum.ewm.common.dto.user.UserShortDto;
-import ru.practicum.ewm.common.error.exception.ConflictDataException;
 import ru.practicum.ewm.common.error.exception.NotFoundException;
 import ru.practicum.ewm.common.error.exception.ValidationException;
 import ru.practicum.ewm.common.feignclient.LocationClient;
 import ru.practicum.ewm.common.feignclient.ParticipationRequestClient;
 import ru.practicum.ewm.common.feignclient.UserClient;
-import ru.practicum.ewm.common.model.event.EventStateActionAdmin;
-import ru.practicum.ewm.common.model.event.EventStateActionPrivate;
 import ru.practicum.ewm.common.model.event.EventStates;
 import ru.practicum.ewm.common.model.participationrequest.ParticipationRequestStatus;
 import ru.practicum.ewm.common.util.DateTimeUtil;
@@ -219,57 +216,6 @@ public class EventFacadeImpl implements EventFacade {
 
     private LocationDto getOrCreateLocation(NewLocationDto newLocationDto) {
         return newLocationDto == null ? null : locationClient.createLocationByCoordinates(newLocationDto.getLat(), newLocationDto.getLon());
-    }
-
-    private void calculateNewEventState(Event event, EventStateActionAdmin stateAction) {
-        if (stateAction == EventStateActionAdmin.PUBLISH_EVENT) {
-            if (event.getState() != EventStates.PENDING) {
-                throw new ConflictDataException(
-                        String.format("On Event admin update - " +
-                                        "Event with id %s can't be published from the state %s: ",
-                                event.getId(), event.getState()));
-            }
-
-            LocalDateTime currentDateTime = DateTimeUtil.currentDateTime();
-            if (currentDateTime.plusHours(1).isAfter(event.getEventDate()))
-                throw new ConflictDataException(
-                        String.format("On Event admin update - " +
-                                        "Event with id %s can't be published because the event date is to close %s: ",
-                                event.getId(), event.getEventDate()));
-
-            event.setPublishedOn(currentDateTime);
-            event.setState(EventStates.PUBLISHED);
-        } else if (stateAction == EventStateActionAdmin.REJECT_EVENT) {
-            if (event.getState() == EventStates.PUBLISHED) {
-                throw new ConflictDataException(
-                        String.format("On Event admin update - " +
-                                        "Event with id %s can't be canceled because it is already published: ",
-                                event.getState()));
-            }
-
-            event.setState(EventStates.CANCELED);
-        }
-    }
-
-    private void setStateToEvent(UpdateEventUserRequestDto eventUpdateDto, Event event) {
-        if (eventUpdateDto.getStateAction().toString()
-                .equalsIgnoreCase(EventStateActionPrivate.CANCEL_REVIEW.toString())) {
-            event.setState(EventStates.CANCELED);
-        } else if (eventUpdateDto.getStateAction().toString()
-                .equalsIgnoreCase(EventStateActionPrivate.SEND_TO_REVIEW.toString())) {
-            event.setState(EventStates.PENDING);
-        }
-    }
-
-    private void checkEventTime(LocalDateTime eventDate) {
-        if (eventDate == null) return;
-        log.info("Проверяем дату события на корректность: {}", eventDate);
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime correctEventTime = eventDate.plusHours(2);
-        if (correctEventTime.isBefore(now)) {
-            log.info("дата не корректна");
-            throw new ValidationException("Дата события должна быть +2 часа вперед");
-        }
     }
 
     private void checkEventOwner(Event event, Long userId) {

@@ -3,7 +3,6 @@ package ru.practicum.ewm.common.feignclient;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.ewm.common.dto.location.LocationDto;
 import ru.practicum.ewm.common.dto.location.NewLocationDto;
@@ -11,7 +10,6 @@ import ru.practicum.ewm.common.dto.location.UpdateLocationAdminRequestDto;
 
 import java.util.List;
 
-@Validated
 @FeignClient(name = "location-service", path = "/admin/locations")
 public interface LocationClient {
     @PostMapping
