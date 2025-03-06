@@ -1,0 +1,16 @@
+package ru.practicum.ewm.user;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.Import;
+import ru.practicum.ewm.common.error.ErrorHandler;
+
+@EnableFeignClients(basePackages = "ru.practicum.ewm.common.feignclient")
+@Import({ErrorHandler.class})
+@SpringBootApplication
+public class User {
+    public static void main(String[] args) {
+        SpringApplication.run(User.class, args);
+    }
+}
