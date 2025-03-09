@@ -1,0 +1,14 @@
+grpc:
+  server:
+    port: 0
+
+spring:
+  output:
+    ansi:
+      enabled: ALWAYS
+
+collector:
+  kafka:
+    bootstrap-servers: localhost:9092
+  topic:
+    user-actions-topic: stats.user-actions.v1

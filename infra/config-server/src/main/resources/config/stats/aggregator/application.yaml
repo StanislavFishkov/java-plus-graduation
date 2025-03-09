@@ -1,0 +1,12 @@
+spring:
+  output:
+    ansi:
+      enabled: ALWAYS
+
+aggregator:
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer-group-id: aggregator.sensor.events
+  topic:
+    sensor-events-topic: telemetry.sensors.v1
+    sensor-snapshots-topic: telemetry.snapshots.v1
