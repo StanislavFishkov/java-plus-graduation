@@ -1,3 +1,6 @@
+server:
+  port: 0
+
 spring:
   output:
     ansi:
@@ -6,7 +9,7 @@ spring:
 aggregator:
   kafka:
     bootstrap-servers: localhost:9092
-    consumer-group-id: aggregator.sensor.events
+    consumer-group-id: aggregator.user.actions
   topic:
-    sensor-events-topic: telemetry.sensors.v1
-    sensor-snapshots-topic: telemetry.snapshots.v1
+    user-actions-topic: stats.user-actions.v1
+    events-similarity-topic: stats.events-similarity.v1
