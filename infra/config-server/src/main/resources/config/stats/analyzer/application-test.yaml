@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:AnalyzerDB;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+  h2:
+    console:
+      enabled: true
+  mvc:
+    log-request-details: true
+
+logging:
+  level:
+    root: INFO
+    org:
+      apache:
+        kafka: DEBUG
+      hibernate:
+        orm:
+          jdbc:
+            bind: TRACE
+      springframework:
+        orm:
+          jpa: INFO
