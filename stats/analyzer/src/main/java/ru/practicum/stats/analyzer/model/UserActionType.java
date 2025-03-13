@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum UserActionType {
-    VIEW(0.4),
-    REGISTER(0.8),
-    LIKE(1.0);
+    VIEW(0.4f),
+    REGISTER(0.8f),
+    LIKE(1.0f);
 
-    private final double weight;
+    private final float weight;
 }

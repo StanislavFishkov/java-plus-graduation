@@ -24,7 +24,7 @@ public class UserAction {
     @Enumerated(EnumType.STRING)
     private UserActionType type;
 
-    private Double weight;
+    private Float weight;
 
     private Instant timestamp;
 }

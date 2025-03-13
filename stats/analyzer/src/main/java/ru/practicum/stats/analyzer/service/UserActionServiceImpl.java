@@ -25,10 +25,11 @@ public class UserActionServiceImpl implements UserActionService {
                 .orElseGet(() -> UserAction.builder().eventId(userActionId.eventId()).userId(userActionAvro.getUserId()).build());
 
         UserActionType newUserActionType = UserActionType.valueOf(userActionAvro.getActionType().name());
-        if (userAction.getType() != null && userAction.getType().getWeight() > newUserActionType.getWeight()) return;
+        if (userAction.getType() == null || userAction.getType().getWeight() <= newUserActionType.getWeight()) {
+            userAction.setType(newUserActionType);
+            userAction.setWeight(newUserActionType.getWeight());
+        }
 
-        userAction.setType(newUserActionType);
-        userAction.setWeight(newUserActionType.getWeight());
         userAction.setTimestamp(userActionAvro.getTimestamp());
 
         userActionRepository.save(userAction);
