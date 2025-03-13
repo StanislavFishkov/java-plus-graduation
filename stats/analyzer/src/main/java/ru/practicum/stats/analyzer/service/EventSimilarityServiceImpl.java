@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.ewm.stats.avro.EventSimilarityAvro;
+import ru.practicum.stats.analyzer.model.EventSimilarity;
+import ru.practicum.stats.analyzer.repository.EventSimilarityRepository;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -13,11 +15,12 @@ import java.util.Map;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class EventSimilarityServiceImpl implements EventSimilarityService {
+    private final EventSimilarityRepository eventSimilarityRepository;
     private final Map<Long, Map<Long, Instant>> lastHandledTimestamps = new HashMap<>();
 
     @Override
+    @Transactional
     public void handleEventSimilarity(EventSimilarityAvro eventSimilarityAvro) {
         var eventA = eventSimilarityAvro.getEventA();
         var eventB = eventSimilarityAvro.getEventB();
@@ -29,8 +32,14 @@ public class EventSimilarityServiceImpl implements EventSimilarityService {
             return;
         }
 
+        EventSimilarity eventSimilarity = eventSimilarityRepository.save(EventSimilarity.builder()
+                .eventA(eventA)
+                .eventB(eventB)
+                .score(eventSimilarityAvro.getScore())
+                .build()
+        );
 
-        log.info("Event similarity has been handled: {}", eventSimilarityAvro);
+        log.info("Event similarity has been saved: {}", eventSimilarity);
         lastHandledTimestamps
                 .computeIfAbsent(eventA, e -> new HashMap<>())
                 .put(eventB, eventSimilarityAvro.getTimestamp());

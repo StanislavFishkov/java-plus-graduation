@@ -54,13 +54,13 @@ public class EventSimilarityProcessor {
             }
         } catch (WakeupException ignored) {
         } catch (Exception e) {
-            log.error("Analyzer: error during consuming loop from sensor snapshots topic", e);
+            log.error("Analyzer: error during consuming loop from events similarity topic", e);
         } finally {
             try {
-                log.info("Analyzer: commit offsets before closing sensor snapshots consumer");
+                log.info("Analyzer: commit offsets before closing events similarity consumer");
                 consumer.commitSync(currentOffsets);
             } finally {
-                log.info("Analyzer: close sensor snapshots consumer");
+                log.info("Analyzer: close events similarity consumer");
                 consumer.close();
             }
         }
@@ -75,7 +75,7 @@ public class EventSimilarityProcessor {
         if (count % 10 == 0) {
             consumer.commitAsync(currentOffsets, (offsets, exception) -> {
                 if (exception != null) {
-                    log.warn("Analyzer: error during fixing offsets for sensor snapshots topic: {}", offsets, exception);
+                    log.warn("Analyzer: error during fixing offsets for events similarity topic: {}", offsets, exception);
                 }
             });
         }
