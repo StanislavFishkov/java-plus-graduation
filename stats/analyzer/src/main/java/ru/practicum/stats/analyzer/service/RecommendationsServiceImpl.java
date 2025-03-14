@@ -41,10 +41,10 @@ public class RecommendationsServiceImpl implements RecommendationsService {
 
         return recentEvents.stream()
                 .flatMap(eventId -> eventSimilarityRepository.getSimilarEventsWithoutInteractions(eventId, userId, maxResults))
-                .distinct()
                 .sorted(Comparator.comparingDouble(RecommendedEvent::score).reversed())
-                .limit(maxResults)
                 .map(RecommendedEvent::eventId)
+                .distinct()
+                .limit(maxResults)
                 .map(eventId -> getPredictedScore(eventId, userId))
                 .toList().stream();
     }

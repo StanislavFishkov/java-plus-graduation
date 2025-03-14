@@ -17,7 +17,7 @@ public interface EventFacade {
 
     EventFullDto update(Long eventId, UpdateEventAdminRequestDto updateEventAdminRequestDto);
 
-    EventFullDto get(Long eventId, HttpServletRequest request);
+    EventFullDto get(Long eventId, Long userId);
 
     EventFullDto getById(Long eventId);
 

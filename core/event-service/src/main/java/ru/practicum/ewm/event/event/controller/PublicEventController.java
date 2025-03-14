@@ -20,8 +20,9 @@ public class PublicEventController {
     private final EventFacade eventFacade;
 
     @GetMapping("/{id}")
-    public EventFullDto get(@PathVariable("id") Long eventId, HttpServletRequest request) {
-        return eventFacade.get(eventId, request);
+    public EventFullDto get(@PathVariable("id") Long eventId,
+                            @RequestHeader("X-EWM-USER-ID") Long userId) {
+        return eventFacade.get(eventId, userId);
     }
 
     @GetMapping
