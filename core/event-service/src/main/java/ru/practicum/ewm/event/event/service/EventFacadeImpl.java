@@ -211,6 +211,27 @@ public class EventFacadeImpl implements EventFacade {
         return eventService.existsByLocationId(locationId);
     }
 
+    @Override
+    public List<RecommendedEventDto> getRecommendations(Long userId, int maxResults) {
+        List<RecommendedEventDto> recommendations = statClientAnalyzer.getRecommendationsForUser(userId, maxResults)
+                .map(e -> new RecommendedEventDto(e.getEventId(), e.getScore()))
+                .toList();
+
+        log.info("Recommendations for user {} are retrieved (maxResults - {}): {}", userId, maxResults, recommendations);
+        return recommendations;
+    }
+
+    @Override
+    public void like(Long userId, Long eventId) {
+        participationRequestClient.getByEventId(eventId, ParticipationRequestStatus.CONFIRMED).stream()
+                .filter(pr -> pr.getRequester().equals(userId))
+                .findFirst()
+                .orElseThrow(() -> new ValidationException("It is prohibited to like events without confirmed registration"));
+
+        statClientCollector.collectUserAction(userId, eventId, ActionTypeProto.ACTION_LIKE, Instant.now());
+        log.info("User {} liked event {}", userId, eventId);
+    }
+
     private LocationDto getOrCreateLocation(NewLocationDto newLocationDto) {
         return newLocationDto == null ? null : locationClient.createLocationByCoordinates(newLocationDto.getLat(), newLocationDto.getLon());
     }

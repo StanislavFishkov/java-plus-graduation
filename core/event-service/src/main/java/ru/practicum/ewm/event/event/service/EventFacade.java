@@ -31,4 +31,8 @@ public interface EventFacade {
                                                        EventRequestStatusUpdateRequestDto requestStatusUpdateRequest);
 
     boolean existsByLocationId(Long locationId);
+
+    List<RecommendedEventDto> getRecommendations(Long userId, int maxResults);
+
+    void like(Long userId, Long eventId);
 }
