@@ -10,7 +10,10 @@ import ru.practicum.ewm.common.dto.participationrequest.ParticipationRequestDto;
 import ru.practicum.ewm.common.feignclient.EventClient;
 import ru.practicum.ewm.common.feignclient.UserClient;
 import ru.practicum.ewm.common.model.participationrequest.ParticipationRequestStatus;
+import ru.practicum.grpc.stats.action.ActionTypeProto;
+import ru.practicum.stats.client.StatClientCollector;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -21,13 +24,18 @@ public class ParticipationRequestFacadeImpl implements ParticipationRequestFacad
     private final ParticipationRequestService participationRequestService;
     private final UserClient userClient;
     private final EventClient eventClient;
+    private final StatClientCollector statClientCollector;
 
     @Override
     public ParticipationRequestDto create(Long userId, Long eventId) {
         userClient.getById(userId);
         EventFullDto event = eventClient.getById(eventId);
 
-        return participationRequestService.create(userId, event);
+        ParticipationRequestDto participationRequestDto = participationRequestService.create(userId, event);
+
+        statClientCollector.collectUserAction(eventId, userId, ActionTypeProto.ACTION_REGISTER, Instant.now());
+
+        return participationRequestDto;
     }
 
     @Override

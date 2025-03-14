@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "08b621b0-bd52-4b68-b9e6-9386a444a62f",
+		"_postman_id": "16784550-238d-4bdd-b9a2-f4a4d5088159",
 		"name": "Test Explore With Me - Feature location",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "36354845"
@@ -3891,7 +3891,7 @@
 									"pm.expect(target).to.have.property('paid');\r",
 									"pm.expect(target).to.have.property('eventDate');\r",
 									"pm.expect(target).to.have.property('initiator');\r",
-									"pm.expect(target).to.have.property('views');\r",
+									"pm.expect(target).to.have.property('rating');\r",
 									"pm.expect(target).to.have.property('confirmedRequests');\r",
 									"});\r",
 									"\r",
@@ -4050,7 +4050,7 @@
 									"pm.expect(target).to.have.property('paid');\r",
 									"pm.expect(target).to.have.property('eventDate');\r",
 									"pm.expect(target).to.have.property('initiator');\r",
-									"pm.expect(target).to.have.property('views');\r",
+									"pm.expect(target).to.have.property('rating');\r",
 									"pm.expect(target).to.have.property('confirmedRequests');\r",
 									"});\r",
 									"\r",

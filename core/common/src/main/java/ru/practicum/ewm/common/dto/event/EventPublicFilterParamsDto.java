@@ -33,6 +33,6 @@ public class EventPublicFilterParamsDto {
 
     public enum EventSort {
         EVENT_DATE,
-        VIEWS
+        RATING
     }
 }

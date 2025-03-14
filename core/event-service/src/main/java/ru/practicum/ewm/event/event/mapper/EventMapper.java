@@ -10,13 +10,13 @@ import ru.practicum.ewm.event.event.model.Event;
 @Mapper(componentModel = "spring")
 public interface EventMapper {
     @Mapping(target = "confirmedRequests", ignore = true)
-    @Mapping(target = "views", ignore = true)
+    @Mapping(target = "rating", ignore = true)
     @Mapping(target = "initiator", source = "initiator")
     @Mapping(target = "id", source = "event.id")
     EventShortDto toShortDto(Event event, UserShortDto initiator);
 
     @Mapping(target = "confirmedRequests", ignore = true)
-    @Mapping(target = "views", ignore = true)
+    @Mapping(target = "rating", ignore = true)
     @Mapping(target = "initiator", source = "initiator")
     @Mapping(target = "location", source = "location")
     @Mapping(target = "id", source = "event.id")
