@@ -13,8 +13,8 @@ public interface EventSimilarityRepository extends JpaRepository<EventSimilarity
     @Query("Select new ru.practicum.stats.analyzer.repository.projection.RecommendedEvent((CASE WHEN es.eventA = :eventId THEN es.eventB ELSE es.eventA END) as eventId, es.score as score) " +
             "from EventSimilarity es " +
             "where (es.eventA = :eventId or es.eventB = :eventId) " +
-            "   and (CASE WHEN es.eventA = :eventId THEN es.eventB ELSE es.eventA END) " +
-            "       NOT IN (Select ua.eventId from UserAction ua where ua.userId = :userId) " +
+            "   and NOT EXISTS (Select ua.eventId from UserAction ua where ua.userId = :userId " +
+            "        and ua.eventId = (CASE WHEN es.eventA = :eventId THEN es.eventB ELSE es.eventA END)) " +
             "order by es.score DESC " +
             "limit :maxResults")
     Stream<RecommendedEvent> getSimilarEventsWithoutInteractions(@Param("eventId") Long eventId,
@@ -23,10 +23,10 @@ public interface EventSimilarityRepository extends JpaRepository<EventSimilarity
 
     @Query("Select new ru.practicum.stats.analyzer.repository.projection.RecommendedEvent(" +
             "   (CASE WHEN es.eventA = :eventId THEN es.eventB ELSE es.eventA END) as eventId, es.score as score) " +
-            "from EventSimilarity es " +
+            "from EventSimilarity es join UserAction ua " +
+            "   on (CASE WHEN es.eventA = :eventId THEN es.eventB ELSE es.eventA END) = ua.eventId " +
             "where (es.eventA = :eventId or es.eventB = :eventId) " +
-            "   and (CASE WHEN es.eventA = :eventId THEN es.eventB ELSE es.eventA END) " +
-            "       IN (Select ua.eventId from UserAction ua where ua.userId = :userId) " +
+            "   and ua.userId = :userId " +
             "order by es.score DESC " +
             "limit :maxResults")
     Stream<RecommendedEvent> getSimilarEventsWithInteractions(@Param("eventId") Long eventId,

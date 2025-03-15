@@ -26,6 +26,7 @@ public class KafkaClientsConfig {
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, KafkaProperties.KEY_DESERIALIZER_CLASS);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaProperties.USER_ACTION_DESERIALIZER_CLASS);
         config.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaProperties.consumerGroupId());
+        config.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
 
         return new KafkaConsumer<>(config);
     }
