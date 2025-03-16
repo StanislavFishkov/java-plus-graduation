@@ -16,15 +16,13 @@ import ru.practicum.ewm.common.feignclient.ParticipationRequestClient;
 import ru.practicum.ewm.common.feignclient.UserClient;
 import ru.practicum.ewm.common.model.event.EventStates;
 import ru.practicum.ewm.common.model.participationrequest.ParticipationRequestStatus;
-import ru.practicum.ewm.common.util.DateTimeUtil;
 import ru.practicum.ewm.event.event.mapper.EventMapper;
 import ru.practicum.ewm.event.event.model.Event;
-import ru.practicum.stats.client.StatClient;
-import ru.practicum.stats.dto.HitDto;
-import ru.practicum.stats.dto.StatsDto;
-import ru.practicum.stats.dto.StatsRequestParamsDto;
+import ru.practicum.grpc.stats.action.ActionTypeProto;
+import ru.practicum.stats.client.StatClientAnalyzer;
+import ru.practicum.stats.client.StatClientCollector;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -38,9 +36,8 @@ public class EventFacadeImpl implements EventFacade {
     private final UserClient userClient;
     private final LocationClient locationClient;
     private final ParticipationRequestClient participationRequestClient;
-    private final StatClient statClient;
-
-    private static final String appNameForStat = "ewm-main-service";
+    private final StatClientCollector statClientCollector;
+    private final StatClientAnalyzer statClientAnalyzer;
 
     @Override
     public EventFullDto addEvent(Long userId, NewEventDto newEventDto) {
@@ -109,7 +106,7 @@ public class EventFacadeImpl implements EventFacade {
     }
 
     @Override
-    public EventFullDto get(Long eventId, HttpServletRequest request) {
+    public EventFullDto get(Long eventId, Long userId) {
         Event event = eventService.getById(eventId);
 
         if (event.getState() != EventStates.PUBLISHED)
@@ -122,7 +119,8 @@ public class EventFacadeImpl implements EventFacade {
         populateWithConfirmedRequests(List.of(event), List.of(eventDto));
         populateWithStats(List.of(eventDto));
 
-        hitStat(request);
+        statClientCollector.collectUserAction(eventId, userId, ActionTypeProto.ACTION_VIEW, Instant.now());
+
         return eventDto;
     }
 
@@ -175,10 +173,9 @@ public class EventFacadeImpl implements EventFacade {
         populateWithConfirmedRequests(events, eventsDto, true);
         populateWithStats(eventsDto);
 
-        if (filters.getSort() != null && filters.getSort() == EventPublicFilterParamsDto.EventSort.VIEWS)
-            eventsDto.sort(Comparator.comparing(EventShortDto::getViews).reversed());
+        if (filters.getSort() != null && filters.getSort() == EventPublicFilterParamsDto.EventSort.RATING)
+            eventsDto.sort(Comparator.comparing(EventShortDto::getRating).reversed());
 
-        hitStat(request);
         return eventsDto;
     }
 
@@ -212,6 +209,27 @@ public class EventFacadeImpl implements EventFacade {
     @Override
     public boolean existsByLocationId(Long locationId) {
         return eventService.existsByLocationId(locationId);
+    }
+
+    @Override
+    public List<RecommendedEventDto> getRecommendations(Long userId, int maxResults) {
+        List<RecommendedEventDto> recommendations = statClientAnalyzer.getRecommendationsForUser(userId, maxResults)
+                .map(e -> new RecommendedEventDto(e.getEventId(), e.getScore()))
+                .toList();
+
+        log.info("Recommendations for user {} are retrieved (maxResults - {}): {}", userId, maxResults, recommendations);
+        return recommendations;
+    }
+
+    @Override
+    public void like(Long userId, Long eventId) {
+        participationRequestClient.getByEventId(eventId, ParticipationRequestStatus.CONFIRMED).stream()
+                .filter(pr -> pr.getRequester().equals(userId))
+                .findFirst()
+                .orElseThrow(() -> new ValidationException("It is prohibited to like events without confirmed registration"));
+
+        statClientCollector.collectUserAction(userId, eventId, ActionTypeProto.ACTION_LIKE, Instant.now());
+        log.info("User {} liked event {}", userId, eventId);
     }
 
     private LocationDto getOrCreateLocation(NewLocationDto newLocationDto) {
@@ -250,27 +268,11 @@ public class EventFacadeImpl implements EventFacade {
     private void populateWithStats(List<? extends EventShortDto> eventsDto) {
         if (eventsDto.isEmpty()) return;
 
-        Map<String, EventShortDto> uris = eventsDto.stream()
-                .collect(Collectors.toMap(e -> String.format("/events/%s", e.getId()), e -> e));
+        Map<Long, EventShortDto> events = eventsDto.stream()
+                .collect(Collectors.toMap(EventShortDto::getId, Function.identity()));
 
-        LocalDateTime currentDateTime = DateTimeUtil.currentDateTime();
-        List<StatsDto> stats = statClient.get(StatsRequestParamsDto.builder()
-                .start(currentDateTime.minusDays(1))
-                .end(currentDateTime)
-                .uris(uris.keySet().stream().toList())
-                .unique(true)
-                .build());
-
-        stats.forEach(stat -> Optional.ofNullable(uris.get(stat.getUri()))
-                .ifPresent(e -> e.setViews(stat.getHits())));
-    }
-
-    private void hitStat(HttpServletRequest request) {
-        statClient.hit(HitDto.builder()
-                .app(appNameForStat)
-                .uri(request.getRequestURI())
-                .ip(request.getRemoteAddr())
-                .timestamp(DateTimeUtil.currentDateTime())
-                .build());
+        statClientAnalyzer.getInteractionsCount(events.keySet().stream().toList())
+                        .forEach(stat -> Optional.ofNullable(events.get(stat.getEventId()))
+                                .ifPresent(e -> e.setRating(stat.getScore())));
     }
 }

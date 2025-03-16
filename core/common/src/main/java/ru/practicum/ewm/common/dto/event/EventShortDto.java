@@ -22,6 +22,6 @@ public class EventShortDto {
     private LocalDateTime eventDate;
     private Boolean paid;
     private String title;
-    private long confirmedRequests;
-    private int views;
+    private Long confirmedRequests;
+    private Float rating;
 }
